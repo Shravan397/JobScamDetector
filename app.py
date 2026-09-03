@@ -68,7 +68,9 @@ with st.sidebar:
 # MAIN TITLE
 # =========================================================
 
-st.title("🔍 AI-Based Job Scam Detection and Risk Assessment System")
+st.title(
+    "🔍 AI-Based Job Scam Detection and Risk Assessment System"
+)
 
 st.write(
     "Analyze a job advertisement using a machine learning model "
@@ -150,9 +152,11 @@ if analyze:
     # -----------------------------------------------------
 
     if not title.strip():
+
         st.error("Please enter the Job Title.")
 
     elif not description.strip():
+
         st.error("Please enter the Job Description.")
 
     else:
@@ -170,28 +174,47 @@ if analyze:
             benefits
         )
 
-        # -------------------------------------------------
-        # TF-IDF TRANSFORMATION
-        # -------------------------------------------------
 
         # -------------------------------------------------
-        # PREDICTION LATENCY
-        # Measures TF-IDF transformation + model prediction
+        # START PREDICTION TIMER
         # -------------------------------------------------
 
         start_time = time.perf_counter()
 
-        features = vectorizer.transform([combined_text])
+
+        # -------------------------------------------------
+        # TF-IDF TRANSFORMATION
+        # -------------------------------------------------
+
+        features = vectorizer.transform(
+            [combined_text]
+        )
+
 
         # -------------------------------------------------
         # FRAUD PROBABILITY
         # -------------------------------------------------
 
-        probability = model.predict_proba(features)[0][1]
+        probability = model.predict_proba(
+            features
+        )[0][1]
 
-        prediction_latency = time.perf_counter() - start_time
 
-        risk_score = probability * 100
+        # -------------------------------------------------
+        # STOP PREDICTION TIMER
+        # -------------------------------------------------
+
+        prediction_latency = (
+            time.perf_counter() - start_time
+        )
+
+
+        # -------------------------------------------------
+        # CONVERT PROBABILITY TO PERCENTAGE
+        # -------------------------------------------------
+
+        fraud_probability = probability * 100
+
 
         # -------------------------------------------------
         # CLASSIFICATION
@@ -200,20 +223,30 @@ if analyze:
         threshold = 0.40
 
         if probability >= threshold:
+
             prediction = "Potentially Fraudulent"
+
         else:
+
             prediction = "Likely Legitimate"
+
 
         # -------------------------------------------------
         # RISK LEVEL
         # -------------------------------------------------
 
-        if risk_score < 30:
+        if fraud_probability < 30:
+
             risk_level = "Low"
-        elif risk_score < 60:
+
+        elif fraud_probability < 60:
+
             risk_level = "Medium"
+
         else:
+
             risk_level = "High"
+
 
         # =================================================
         # RESULTS
@@ -223,43 +256,53 @@ if analyze:
 
         st.header("📊 Analysis Result")
 
+
         # -------------------------------------------------
         # TOP METRICS
         # -------------------------------------------------
 
-        col1, col2, col3 = st.columns(3)
+        result_col1, result_col2, result_col3 = st.columns(3)
 
-        with col1:
+
+        with result_col1:
+
             st.metric(
                 "Fraud Probability",
-                f"{risk_score:.2f}%"
+                f"{fraud_probability:.2f}%"
             )
 
-        with col2:
+
+        with result_col2:
+
             st.metric(
                 "Risk Level",
                 risk_level
             )
 
-        with col3:
+
+        with result_col3:
+
             st.metric(
                 "Prediction Latency",
                 f"{prediction_latency * 1000:.2f} ms"
             )
+
 
         st.caption(
             "Fraud Probability is the model's estimated likelihood "
             "that the posting is fraudulent. Risk Level converts "
             "that probability into Low, Medium, or High for easier "
             "interpretation. Prediction Latency measures TF-IDF "
-            "transformation + model prediction for this request."
+            "transformation and model prediction time for this request."
         )
+
 
         # -------------------------------------------------
         # PREDICTION
         # -------------------------------------------------
 
         st.subheader("Prediction")
+
 
         if prediction == "Potentially Fraudulent":
 
@@ -273,15 +316,18 @@ if analyze:
                 f"✅ {prediction}"
             )
 
+
         # -------------------------------------------------
-        # RISK BAR
+        # RISK ASSESSMENT
         # -------------------------------------------------
 
         st.subheader("Risk Assessment")
 
+
         st.progress(
-            min(int(risk_score), 100)
+            min(int(fraud_probability), 100)
         )
+
 
         if risk_level == "High":
 
@@ -292,12 +338,14 @@ if analyze:
                 "or making any payment."
             )
 
+
         elif risk_level == "Medium":
 
             st.warning(
                 "🟡 MEDIUM RISK — Independently verify the employer "
                 "and job details before proceeding."
             )
+
 
         else:
 
@@ -307,34 +355,63 @@ if analyze:
                 "is still recommended."
             )
 
+
         # =================================================
-        # POSTING COMPLETENESS CHECK
+        # POSTING INFORMATION CHECKS
         # =================================================
 
-        st.subheader("📋 Posting Information Checks")
+        st.subheader(
+            "📋 Posting Information Checks"
+        )
+
 
         check1, check2, check3 = st.columns(3)
+
 
         with check1:
 
             if company_profile.strip():
-                st.success("✅ Company Profile provided")
+
+                st.success(
+                    "✅ Company Profile provided"
+                )
+
             else:
-                st.warning("⚠️ Company Profile missing")
+
+                st.warning(
+                    "⚠️ Company Profile missing"
+                )
+
 
         with check2:
 
             if requirements.strip():
-                st.success("✅ Requirements provided")
+
+                st.success(
+                    "✅ Requirements provided"
+                )
+
             else:
-                st.warning("⚠️ Requirements missing")
+
+                st.warning(
+                    "⚠️ Requirements missing"
+                )
+
 
         with check3:
 
             if benefits.strip():
-                st.success("✅ Benefits provided")
+
+                st.success(
+                    "✅ Benefits provided"
+                )
+
             else:
-                st.warning("⚠️ Benefits missing")
+
+                st.warning(
+                    "⚠️ Benefits missing"
+                )
+
 
         # =================================================
         # MODEL PERFORMANCE
@@ -348,90 +425,144 @@ if analyze:
             "Performance measured on the held-out test dataset."
         )
 
+
         metric1, metric2, metric3, metric4, metric5 = st.columns(5)
 
+
         with metric1:
+
             st.metric(
                 "Accuracy",
                 "97.54%"
             )
 
+
         with metric2:
+
             st.metric(
                 "Precision",
                 "69.81%"
             )
 
+
         with metric3:
+
             st.metric(
                 "Recall",
                 "86.72%"
             )
 
+
         with metric4:
+
             st.metric(
                 "F1-Score",
                 "77.35%"
             )
 
+
         with metric5:
+
             st.metric(
                 "ROC-AUC",
                 "98.67%"
             )
 
+
         st.caption(
             "Test-set results from the final Logistic Regression model."
         )
 
-        # =================================================
+
+# =========================================================
 # MODEL EVALUATION DASHBOARD
-# =================================================
+# =========================================================
 
 st.divider()
 
-st.header("📈 Model Evaluation Dashboard")
+st.header(
+    "📈 Model Evaluation Dashboard"
+)
 
 st.write(
     "The final Logistic Regression model was evaluated on an "
     "untouched test dataset."
 )
 
-# Test-set performance
+
+# ---------------------------------------------------------
+# TEST-SET PERFORMANCE
+# ---------------------------------------------------------
+
 eval_col1, eval_col2, eval_col3 = st.columns(3)
 
+
 with eval_col1:
-    st.metric("Accuracy", "97.54%")
-    st.metric("Precision", "69.81%")
+
+    st.metric(
+        "Accuracy",
+        "97.54%"
+    )
+
+    st.metric(
+        "Precision",
+        "69.81%"
+    )
+
 
 with eval_col2:
-    st.metric("Recall", "86.72%")
-    st.metric("F1-Score", "77.35%")
+
+    st.metric(
+        "Recall",
+        "86.72%"
+    )
+
+    st.metric(
+        "F1-Score",
+        "77.35%"
+    )
+
 
 with eval_col3:
-    st.metric("ROC-AUC", "98.67%")
-    st.metric("PR-AUC", "90.45%")
+
+    st.metric(
+        "ROC-AUC",
+        "98.67%"
+    )
+
+    st.metric(
+        "PR-AUC",
+        "90.45%"
+    )
+
 
 st.caption(
-    "These values are from the final test-set evaluation performed "
-    "during model development."
+    "These values are from the final test-set evaluation "
+    "performed during model development."
 )
 
-# Explanation
-with st.expander("📖 What do these metrics mean?"):
+
+# =========================================================
+# METRIC EXPLANATIONS
+# =========================================================
+
+with st.expander(
+    "📖 What do these metrics mean?"
+):
 
     st.write(
-        "**Accuracy:** Percentage of all job postings classified correctly."
+        "**Accuracy:** Percentage of all job postings "
+        "classified correctly."
     )
 
     st.write(
-        "**Precision:** Percentage of postings predicted as fraudulent "
-        "that were actually fraudulent."
+        "**Precision:** Percentage of postings predicted as "
+        "fraudulent that were actually fraudulent."
     )
 
     st.write(
-        "**Recall:** Percentage of actual fraudulent postings detected "
-        "by the model."
+        "**Recall:** Percentage of actual fraudulent postings "
+        "detected by the model."
     )
 
     st.write(
@@ -439,11 +570,54 @@ with st.expander("📖 What do these metrics mean?"):
     )
 
     st.write(
-        "**ROC-AUC:** Measures how well the model separates fraudulent "
-        "and legitimate postings across classification thresholds."
+        "**ROC-AUC:** Measures how well the model separates "
+        "fraudulent and legitimate postings across "
+        "classification thresholds."
     )
 
     st.write(
-        "**PR-AUC:** Measures performance using the precision-recall "
-        "trade-off, which is particularly useful for imbalanced data."
+        "**PR-AUC:** Measures performance using the "
+        "precision-recall trade-off, which is particularly "
+        "useful for imbalanced data."
+    )
+
+
+# =========================================================
+# ABOUT THE SYSTEM
+# =========================================================
+
+with st.expander(
+    "ℹ️ About the System"
+):
+
+    st.write(
+        "**Dataset:** Employment Scam Aegean Dataset (EMSCAD)"
+    )
+
+    st.write(
+        "**Text Representation:** TF-IDF with unigram and "
+        "bigram features."
+    )
+
+    st.write(
+        "**Final Model:** Logistic Regression"
+    )
+
+    st.write(
+        "**Hyperparameter:** C = 5"
+    )
+
+    st.write(
+        "**Classification Threshold:** 0.40"
+    )
+
+    st.write(
+        "**Risk Assessment:** Fraud probability is converted "
+        "into Low, Medium, or High risk categories."
+    )
+
+    st.write(
+        "**Training Strategy:** Train and validation data "
+        "were combined for final training, while the test set "
+        "was kept untouched for final evaluation."
     )
